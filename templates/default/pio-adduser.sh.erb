@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+expect -c "
+set timeout 180
+spawn <%= node[:predictionio][:root_path] %>/bin/users
+expect \"Please enter a choice (1-3)\"
+send \"1\n\"
+expect \"Email\"
+send \"<%= node[:predictionio][:admin_user][:email] %>\n\"
+expect \"Password\"
+send \"<%= node[:predictionio][:admin_user][:password] %>\n\"
+expect \"Retype password\"
+send \"<%= node[:predictionio][:admin_user][:password] %>\n\"
+expect \"First name\"
+send \"<%= node[:predictionio][:admin_user][:first_name] %>\n\"
+expect \"Last name\"
+send \"<%= node[:predictionio][:admin_user][:last_name] %>\n\"
+interact
+"
