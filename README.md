@@ -73,6 +73,11 @@ Just include `predictionio` in your node's `run_list`:
   "java": {
     "install_flavor": "openjdk",
     "jdk_version": "7"
+  },
+  "predictionio": {
+      "user": "vagrant",
+      "version": "0.7.1",
+      "hadoop_version": "1.2.1"
   }
 }
 ```
