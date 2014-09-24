@@ -38,10 +38,10 @@ bash 'stop previous PredictionIO' do
     su -c "yes | #{pio[:root_path]}/bin/stop-all.sh" #{pio[:user]}
   EOH
   only_if do
-    (::File.exists?("#{pio[:root_path]}/admin.pid") ||
-    ::File.exists?("#{pio[:root_path]}/api.pid") ||
-    ::File.exists?("#{pio[:root_path]}/scheduler.pid")) &&
-    ::File.exists?("#{pio[:root_path]}/bin/stop-all.sh")
+    (::File.exist?("#{pio[:root_path]}/admin.pid") ||
+    ::File.exist?("#{pio[:root_path]}/api.pid") ||
+    ::File.exist?("#{pio[:root_path]}/scheduler.pid")) &&
+    ::File.exist?("#{pio[:root_path]}/bin/stop-all.sh")
   end
 end
 
@@ -49,7 +49,7 @@ end
 remote_file "#{pio[:setup_dir]}/PredictionIO-#{pio[:version]}.zip" do
   source "http://download.prediction.io/PredictionIO-#{pio[:version]}.zip"
   action :create_if_missing
-  not_if { ::Dir.exists?(pio[:root_path]) }
+  not_if { ::Dir.exist?(pio[:root_path]) }
 end
 bash 'extract_pio' do
   cwd pio[:setup_dir]
@@ -58,7 +58,7 @@ bash 'extract_pio' do
     mv #{pio[:setup_dir]}/PredictionIO-#{pio[:version]} #{pio[:root_path]}
     chown -R #{pio[:user]}:#{pio[:user]} #{pio[:root_path]}
     EOH
-  not_if { ::Dir.exists?(pio[:root_path]) }
+  not_if { ::Dir.exist?(pio[:root_path]) }
 end
 
 # create root_path/vendors
@@ -72,7 +72,7 @@ end
 remote_file "#{pio[:vendors_dir]}/hadoop-#{pio[:hadoop_version]}.tar.gz" do
   source "http://archive.apache.org/dist/hadoop/core/hadoop-#{pio[:hadoop_version]}/hadoop-#{pio[:hadoop_version]}.tar.gz"
   action :create_if_missing
-  not_if { ::Dir.exists?(pio[:hadoop_dir]) }
+  not_if { ::Dir.exist?(pio[:hadoop_dir]) }
 end
 # copy additional setup files
 %w(hdfs-site.xml pio-adduser.sh).each do |file|
@@ -93,7 +93,7 @@ bash 'extract_hadoop' do
     mkdir -p #{pio[:vendors_dir]}/hadoop/dn
     chown -R #{pio[:user]}:#{pio[:user]} #{pio[:vendors_dir]}
   EOH
-  not_if { ::Dir.exists?(pio[:hadoop_dir]) }
+  not_if { ::Dir.exist?(pio[:hadoop_dir]) }
 end
 
 # setup-vendors
@@ -104,7 +104,7 @@ bash 'setup-vendors' do
     chown -R #{pio[:user]}:#{pio[:user]} #{pio[:vendors_dir]}
     touch #{pio[:setup_dir]}/setup-vendors.done
   EOH
-  not_if { ::File.exists?("#{pio[:setup_dir]}/setup-vendors.done") }
+  not_if { ::File.exist?("#{pio[:setup_dir]}/setup-vendors.done") }
 end
 
 bash 'hadoop namenode' do
@@ -112,7 +112,7 @@ bash 'hadoop namenode' do
       sudo -u #{pio[:user]} #{pio[:hadoop_dir]}/bin/hadoop namenode -format -force
       touch #{pio[:setup_dir]}/namenode.done
   EOH
-  not_if { ::File.exists?("#{pio[:setup_dir]}/namenode.done") }
+  not_if { ::File.exist?("#{pio[:setup_dir]}/namenode.done") }
 end
 
 bash 'wait for MongoDB ready' do
@@ -120,7 +120,7 @@ bash 'wait for MongoDB ready' do
     #{pio[:root_path]}/bin/conncheck
     touch #{pio[:setup_dir]}/mongodb.done
   EOH
-  not_if { ::File.exists?("#{pio[:setup_dir]}/mongodb.done") }
+  not_if { ::File.exist?("#{pio[:setup_dir]}/mongodb.done") }
 end
 
 # setup PredictionIO
@@ -129,14 +129,14 @@ bash 'setup PredictionIO' do
     sudo -u #{pio[:user]} #{pio[:root_path]}/bin/setup.sh > #{pio[:setup_dir]}/setup.log
     touch #{pio[:setup_dir]}/setup.done
   EOH
-  not_if { ::File.exists?("#{pio[:setup_dir]}/setup.done") }
+  not_if { ::File.exist?("#{pio[:setup_dir]}/setup.done") }
 end
 
 # force remove previous pid files
 %w{admin.pid api.pid scheduler.pid}.each do |pid_file|
   file "#{pio[:root_path]}/#{pid_file}" do
     action :delete
-    only_if { ::File.exists?("#{pio[:root_path]}/#{pid_file}") }
+    only_if { ::File.exist?("#{pio[:root_path]}/#{pid_file}") }
   end
 end
 

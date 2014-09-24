@@ -30,5 +30,5 @@ bash 'add user to PredictionIO' do
     bash #{pio[:setup_dir]}/pio-adduser.sh > #{pio[:setup_dir]}/pio-adduser.log
     touch #{pio[:setup_dir]}/adduser.done
   EOH
-  not_if { ::File.exists?("#{pio[:setup_dir]}/adduser.done") }
+  not_if { ::File.exist?("#{pio[:setup_dir]}/adduser.done") }
 end
