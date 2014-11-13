@@ -75,7 +75,7 @@ remote_file "#{pio[:vendors_dir]}/hadoop-#{pio[:hadoop_version]}.tar.gz" do
   not_if { ::Dir.exist?(pio[:hadoop_dir]) }
 end
 # copy additional setup files
-%w(hdfs-site.xml pio-adduser.sh).each do |file|
+%w{hdfs-site.xml pio-adduser.sh}.each do |file|
   template "#{pio[:setup_dir]}/#{file}" do
     source "#{file}.erb"
   end
